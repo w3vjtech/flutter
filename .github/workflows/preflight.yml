@@ -1,0 +1,16 @@
+name: Preflight (no external actions)
+
+on:
+  push:
+    branches:
+      - ci-setup
+
+jobs:
+  preflight-only:
+    name: Preflight Only
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Say Hello
+        run: |
+          echo "Runner: $(uname -a)"
+          echo "Branch: ${{ github.ref }}"
