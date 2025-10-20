@@ -3,7 +3,7 @@ name: Flutter CI Builds
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ main, ci-setup ]
     tags:
       - 'v*'
       - 'release-*'
@@ -20,7 +20,7 @@ permissions:
 jobs:
   android:
     name: Build Android APK/AAB
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       CI: true
     steps:
@@ -50,6 +50,8 @@ jobs:
         with:
           channel: 'stable'
           cache: true
+      - name: Flutter version
+        run: flutter --version
 
       - name: Doctor (sanity)
         run: flutter doctor -v
@@ -67,8 +69,8 @@ jobs:
         shell: bash
         run: |
           echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/keystore.jks
-          cat > key.properties <<'EOF'
-          storeFile=android/app/keystore.jks
+          cat > android/key.properties <<'EOF'
+          storeFile=../app/keystore.jks
           storePassword=${ANDROID_KEYSTORE_PASSWORD}
           keyAlias=${ANDROID_KEY_ALIAS}
           keyPassword=${ANDROID_KEY_PASSWORD}
@@ -105,7 +107,7 @@ jobs:
 
   ios:
     name: Build iOS App (no codesign)
-    runs-on: macos-latest
+    runs-on: macos-14
     env:
       CI: true
     steps:
