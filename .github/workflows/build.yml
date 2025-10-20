@@ -18,6 +18,24 @@ permissions:
   contents: read
 
 jobs:
+  preflight:
+    name: Preflight Checks
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Show Runner Info
+        run: |
+          uname -a
+          df -h
+          echo "Branch: ${{ github.ref }}"
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: Flutter Doctor
+        run: flutter doctor -v
   android:
     name: Build Android APK/AAB
     runs-on: ubuntu-22.04
